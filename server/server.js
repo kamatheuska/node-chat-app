@@ -14,19 +14,15 @@ const publicPath = path.join(__dirname, '../public')
 io.on('connection', (socket) => {
   console.log('New user connected')
 
-  socket.emit('newMessage', {
-    from: 'john@example.com',
-    text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti non soluta cupiditate assumenda magni amet, quos nihil perspiciatis quisquam, facere eaque nulla doloremque, recusandae nam provident voluptates laudantium, cumque. Culpa.',
-    createdAt: Date.now()
-  })
-
   socket.on('createMessage', (msg) => {
     console.log('Message from client: ', msg)
+    io.emit('newMessage', {
+      from: msg.from,
+      text: msg.text,
+      createdAt: new Date().getTime()
+    })
   })
-  socket.on('createEmail', (newEmail) => {
-    console.log('createEmail', newEmail)
-  })
-  
+
   socket.on('disconnect', () => {
     console.log('Client disconnected')
   })
