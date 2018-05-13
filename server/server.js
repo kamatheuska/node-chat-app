@@ -9,6 +9,7 @@ const port =  process.env.PORT || 3000
 const server = http.createServer(app)
 const io = socketIO(server)
 
+const { generateMessage } = require('./utils/message')
 const publicPath = path.join(__dirname, '../public')
 
 io.on('connection', (socket) => {
@@ -16,26 +17,14 @@ io.on('connection', (socket) => {
 
   // socket.emit from admin text welcome to the cat app
   //  socket.broadcast.emit from Admin text New user joined
-  socket.emit('newMessage', {
-    from: 'Admin',
-    text: 'Welcome to the chat app',
-    createdAt: new Date().getTime()
-  })
+  socket.emit('newMessage', generateMessage('Admin','Welcome to the chat app'))
 
-  socket.broadcast.emit('newMessage', {
-    from: 'Admin',
-    text: 'New user joined',
-    createdAt: new Date().getTime()
-  })
+  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'))
 
   socket.on('createMessage', (msg) => {
     console.log('Message from client: ', msg)
 
-    io.emit('newMessage', {
-      from: msg.from,
-      text: msg.text,
-      createdAt: new Date().getTime()
-    })
+    io.emit('newMessage', generateMessage(msg.from, msg.text))
     // socket.broadcast.emit('newMessage', {
     //   from: msg.from,
     //   text: msg.text,
